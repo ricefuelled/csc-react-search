@@ -3,34 +3,28 @@ import ReactDOM from 'react-dom'
 import Search from './components/Search'
 import Result from './components/Result'
 import api from './api/api'
+import {connect} from 'react-redux'
+import {changeTitle} from './actions'
 
 class App extends Component{
-
-  state = {
-      images: []
-  }
-  
-  handleSearchTerm = async (term) =>{
-    const response = await api.get("/search/photos", {
-      params: { query: term, per_page: 15, page: Math.floor(Math.random() * 100) + 1 }
-    });    
-
-    this.setState({ images: response.data.results });
+  handleClick = () => {
+    this.props.changeTitle("Changed!")
   }
 
   render(){
-    //console.log("Render");
     return(
       <div className = "container">
-        <div>
-          <Search search={this.handleSearchTerm}/>
-        </div>
-        <div>
-          <Result images={this.state.images}/>
-        </div>
+        <Search/>
+        <h1>{this.props.title}</h1>
+        <button onClick = {this.handleClick}>Change title</button>
+        <Result/>
       </div>
     )
   }
 }
 
-export default App
+const mapStatetoProps = (state) => {
+  return {title: state.title}
+}
+
+export default connect(mapStatetoProps,{changeTitle})(App)
